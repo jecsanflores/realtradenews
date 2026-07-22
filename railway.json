@@ -1,0 +1,11 @@
+{
+  "build": {
+    "builder": "dockerfile",
+    "context": "backend"
+  },
+  "deploy": {
+    "startCommand": "node index.js",
+    "restartPolicyMaxRetries": 5,
+    "restartPolicyWindowSeconds": 600
+  }
+}
