@@ -4,16 +4,11 @@ WORKDIR /app
 
 # Build frontend
 COPY frontend ./frontend
-WORKDIR /app/frontend
-RUN npm install
-RUN npm run build
+RUN cd frontend && npm install && npm run build
 
-# Setup backend
-WORKDIR /app/backend
-COPY backend/package*.json ./
-RUN npm install
-COPY backend/src ./src
+# Setup and run backend
+COPY backend ./backend
+RUN cd backend && npm install
 
 EXPOSE 3000
-
-CMD ["node", "src/index.js"]
+CMD ["node", "backend/src/index.js"]
