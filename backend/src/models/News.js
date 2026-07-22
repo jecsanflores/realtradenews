@@ -18,46 +18,50 @@ class News {
   }
 
   static async findRecent(limit = 50) {
-    return db('news')
+    const items = await db('news')
       .orderBy('published_at', 'desc')
-      .limit(limit)
-      .map(item => ({
-        ...item,
-        tags: JSON.parse(item.tags || '[]')
-      }));
+      .limit(limit);
+
+    return items.map(item => ({
+      ...item,
+      tags: JSON.parse(item.tags || '[]')
+    }));
   }
 
   static async findBySource(source, limit = 20) {
-    return db('news')
+    const items = await db('news')
       .where({ source })
       .orderBy('published_at', 'desc')
-      .limit(limit)
-      .map(item => ({
-        ...item,
-        tags: JSON.parse(item.tags || '[]')
-      }));
+      .limit(limit);
+
+    return items.map(item => ({
+      ...item,
+      tags: JSON.parse(item.tags || '[]')
+    }));
   }
 
   static async findBySentiment(sentiment, limit = 30) {
-    return db('news')
+    const items = await db('news')
       .where({ sentiment })
       .orderBy('published_at', 'desc')
-      .limit(limit)
-      .map(item => ({
-        ...item,
-        tags: JSON.parse(item.tags || '[]')
-      }));
+      .limit(limit);
+
+    return items.map(item => ({
+      ...item,
+      tags: JSON.parse(item.tags || '[]')
+    }));
   }
 
   static async findByImpact(impact, limit = 20) {
-    return db('news')
+    const items = await db('news')
       .where({ impact })
       .orderBy('published_at', 'desc')
-      .limit(limit)
-      .map(item => ({
-        ...item,
-        tags: JSON.parse(item.tags || '[]')
-      }));
+      .limit(limit);
+
+    return items.map(item => ({
+      ...item,
+      tags: JSON.parse(item.tags || '[]')
+    }));
   }
 
   static async deleteOlderThan(daysAgo = 7) {
