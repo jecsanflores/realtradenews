@@ -3,10 +3,9 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Build frontend
-COPY frontend/package*.json ./frontend/
+COPY frontend ./frontend
 WORKDIR /app/frontend
 RUN npm install
-COPY frontend ./
 RUN npm run build
 
 # Setup backend
