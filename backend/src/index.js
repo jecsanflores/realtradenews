@@ -6,6 +6,10 @@ const authRoutes = require('./routes/auth');
 const paymentRoutes = require('./routes/payment');
 const newsRoutes = require('./routes/news');
 const alertRoutes = require('./routes/alerts');
+const priceAlertQueue = require('./queue/priceAlertQueue');
+const NewsScraper = require('./services/newsScraper');
+const TradingEconomicsAPI = require('./services/tradingEconomicsAPI');
+const PoliticalEventsMonitor = require('./services/politicalEventsMonitor');
 
 const app = express();
 
@@ -16,6 +20,24 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+
+// Initialize background jobs
+console.log('Initializing background jobs...');
+
+// Fetch news every minute
+setInterval(() => {
+  NewsScraper.fetchAndStoreNews();
+}, 60000);
+
+// Fetch political events every hour
+setInterval(async () => {
+  try {
+    const events = await PoliticalEventsMonitor.getPoliticalEvents();
+    console.log(`Found ${events.length} political/fed events`);
+  } catch (error) {
+    console.error('Error fetching political events:', error);
+  }
+}, 3600000);
 
 // Health check
 app.get('/health', (req, res) => {

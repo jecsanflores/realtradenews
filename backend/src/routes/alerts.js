@@ -1,78 +1,95 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const Alert = require('../models/Alert');
+const User = require('../models/User');
 const router = express.Router();
 
-// Simulated database
-const userAlerts = new Map();
+// Middleware to verify token
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(401).json({ error: 'Invalid token' });
+  }
+};
 
 // Create alert
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   try {
-    const { email, type, target, condition, notificationMethod } = req.body;
+    const { type, target, condition, notificationMethod } = req.body;
 
-    const alert = {
-      id: Date.now(),
-      email,
-      type, // 'price', 'news', 'political', 'economic'
-      target, // symbol, keyword, speaker
-      condition, // e.g., 'above_150', 'mentions_tech', 'any_speech'
-      notificationMethod, // 'push', 'email', 'both'
-      active: true,
-      createdAt: new Date()
-    };
-
-    if (!userAlerts.has(email)) {
-      userAlerts.set(email, []);
+    const user = await User.findByEmail(req.user.email);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
     }
-    userAlerts.get(email).push(alert);
 
+    const alert = await Alert.create(user.id, type, target, condition, notificationMethod);
     res.status(201).json(alert);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Failed to create alert' });
   }
 });
 
 // Get user alerts
-router.get('/:email', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
   try {
-    const alerts = userAlerts.get(req.params.email) || [];
+    const user = await User.findByEmail(req.user.email);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const alerts = await Alert.findByUserId(user.id);
     res.json(alerts);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Failed to fetch alerts' });
   }
 });
 
 // Update alert
-router.put('/:alertId', async (req, res) => {
+router.put('/:alertId', verifyToken, async (req, res) => {
   try {
-    const { email } = req.body;
-    const alerts = userAlerts.get(email) || [];
-    const alert = alerts.find(a => a.id === parseInt(req.params.alertId));
+    const { alertId } = req.params;
 
-    if (!alert) {
+    const user = await User.findByEmail(req.user.email);
+    const alert = await Alert.findById(alertId);
+
+    if (!alert || alert.user_id !== user.id) {
       return res.status(404).json({ error: 'Alert not found' });
     }
 
-    Object.assign(alert, req.body);
-    res.json(alert);
+    const updatedAlert = await Alert.update(alertId, req.body);
+    res.json(updatedAlert[0]);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Failed to update alert' });
   }
 });
 
 // Delete alert
-router.delete('/:alertId', async (req, res) => {
+router.delete('/:alertId', verifyToken, async (req, res) => {
   try {
-    const { email } = req.body;
-    const alerts = userAlerts.get(email) || [];
-    const index = alerts.findIndex(a => a.id === parseInt(req.params.alertId));
+    const { alertId } = req.params;
 
-    if (index === -1) {
+    const user = await User.findByEmail(req.user.email);
+    const alert = await Alert.findById(alertId);
+
+    if (!alert || alert.user_id !== user.id) {
       return res.status(404).json({ error: 'Alert not found' });
     }
 
-    alerts.splice(index, 1);
+    await Alert.delete(alertId);
     res.json({ message: 'Alert deleted' });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Failed to delete alert' });
   }
 });

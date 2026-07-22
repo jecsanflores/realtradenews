@@ -5,7 +5,11 @@
       "Bash(git config *)",
       "Bash(git add *)",
       "Bash(git commit -m 'Initial setup: Phase 1 foundation *)",
-      "Bash(git commit -m 'Add Phase 1 database schema and setup documentation *)"
+      "Bash(git commit -m 'Add Phase 1 database schema and setup documentation *)",
+      "Bash(npm --version)",
+      "Bash(docker --version)",
+      "Read(//usr/local/**)",
+      "Read(//opt/**)"
     ]
   }
 }

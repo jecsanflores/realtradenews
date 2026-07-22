@@ -2,10 +2,8 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
+const User = require('../models/User');
 const router = express.Router();
-
-// Simulated database (replace with actual DB queries)
-const users = new Map();
 
 // Register
 router.post('/register', [
@@ -20,22 +18,18 @@ router.post('/register', [
 
   const { email, password, name } = req.body;
 
-  if (users.has(email)) {
-    return res.status(400).json({ error: 'User already exists' });
-  }
-
   try {
+    const existingUser = await User.findByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    users.set(email, {
-      email,
-      name,
-      password: hashedPassword,
-      plan: 'free',
-      createdAt: new Date()
-    });
+    await User.create(email, hashedPassword, name);
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Registration failed' });
   }
 });
@@ -51,14 +45,14 @@ router.post('/login', [
   }
 
   const { email, password } = req.body;
-  const user = users.get(email);
-
-  if (!user) {
-    return res.status(401).json({ error: 'Invalid credentials' });
-  }
 
   try {
-    const isValid = await bcrypt.compare(password, user.password);
+    const user = await User.findByEmail(email);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const isValid = await bcrypt.compare(password, user.password_hash);
     if (!isValid) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -78,6 +72,7 @@ router.post('/login', [
       }
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Login failed' });
   }
 });
@@ -99,18 +94,18 @@ const verifyToken = (req, res, next) => {
 };
 
 // Get user profile
-router.get('/profile', verifyToken, (req, res) => {
-  const user = users.get(req.user.email);
-  if (!user) {
-    return res.status(404).json({ error: 'User not found' });
-  }
+router.get('/profile', verifyToken, async (req, res) => {
+  try {
+    const user = await User.getProfile(req.user.email);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
 
-  res.json({
-    email: user.email,
-    name: user.name,
-    plan: user.plan,
-    createdAt: user.createdAt
-  });
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch profile' });
+  }
 });
 
 module.exports = router;
