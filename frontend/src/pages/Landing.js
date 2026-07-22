@@ -26,7 +26,7 @@ export default function Landing() {
       <section className="hero">
         <div className="hero-content">
           <h1 className="hero-title">
-            Alertas en Tiempo Real para Inversionistas Inteligentes
+            ✓ Alertas en Tiempo Real para Inversionistas Inteligentes
           </h1>
           <p className="hero-subtitle">
             No es un asesor. Es información en tiempo real. Monitorea noticias económicas, reportes,
