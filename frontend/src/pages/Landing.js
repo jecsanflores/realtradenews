@@ -29,8 +29,8 @@ export default function Landing() {
             Alertas en Tiempo Real para Inversionistas Inteligentes
           </h1>
           <p className="hero-subtitle">
-            Monitorea noticias, eventos económicos y discursos políticos que mueven el mercado.
-            Recibe alertas instantáneas. Toma decisiones antes que tu competencia.
+            No es un asesor. Es información en tiempo real. Monitorea noticias económicas, reportes,
+            discursos de Trump y la Fed. Recibe alertas antes que el mercado reaccione.
           </p>
           <div className="hero-buttons">
             <button className="btn-primary-lg" onClick={() => navigate('/register')}>
@@ -118,10 +118,10 @@ export default function Landing() {
 
           <div className="feature-card">
             <div className="feature-icon">🔔</div>
-            <h3>Alertas Instantáneas</h3>
+            <h3>Alertas de Noticias en Vivo</h3>
             <p>
-              Crea alertas personalizadas por precio, palabra clave, o evento. Recibe notificaciones
-              por push, email o ambas.
+              Recibe notificaciones instantáneas cuando ocurren eventos económicos importantes:
+              reportes de empleo, decisiones de tasas, discursos de líderes.
             </p>
           </div>
 
@@ -144,11 +144,11 @@ export default function Landing() {
           </div>
 
           <div className="feature-card">
-            <div className="feature-icon">💰</div>
-            <h3>Sentimiento de Mercado</h3>
+            <div className="feature-icon">🐦</div>
+            <h3>Monitoreo de Líderes</h3>
             <p>
-              Análisis automático del sentimiento: ¿es positivo o negativo? Impacto: bajo, medio, alto.
-              Perfecto para trading.
+              Sigue tweets y pronunciamientos de Trump, Powell, Lagarde y otros líderes que impacten
+              el mercado. Noticias antes que el mercado reaccione.
             </p>
           </div>
 
@@ -214,11 +214,11 @@ export default function Landing() {
             <h3>Plan Pro</h3>
             <p className="price">$29.99<span>/mes</span></p>
             <ul className="features-list">
-              <li>✓ Noticias EN VIVO (sin retardo)</li>
-              <li>✓ Alertas ilimitadas</li>
-              <li>✓ Discursos en vivo (Trump/Fed)</li>
+              <li>✓ Noticias económicas EN VIVO</li>
+              <li>✓ Alertas de discursos (Trump, Fed, Europa)</li>
+              <li>✓ Monitoreo de tweets/pronunciamientos</li>
               <li>✓ Calendario económico completo</li>
-              <li>✓ Soporte por email</li>
+              <li>✓ Reportes: empleo, inflación, tasas, etc</li>
             </ul>
             <button className="btn-plan pro" onClick={() => navigate('/register')}>
               Probar Ahora - 14 Días Gratis
