@@ -2,15 +2,17 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy frontend build
-COPY frontend/build ./frontend/build
-
-# Copy backend
-COPY backend/package*.json ./backend/
-WORKDIR /app/backend
+# Build frontend
+COPY frontend/package*.json ./frontend/
+WORKDIR /app/frontend
 RUN npm install
+COPY frontend ./
+RUN npm run build
 
-# Copy backend source
+# Setup backend
+WORKDIR /app/backend
+COPY backend/package*.json ./
+RUN npm install
 COPY backend/src ./src
 
 EXPOSE 3000
