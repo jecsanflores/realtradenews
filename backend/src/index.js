@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const path = require('path');
+const fs = require('fs');
 const authRoutes = require('./routes/auth');
 const paymentRoutes = require('./routes/payment');
 const newsRoutes = require('./routes/news');
@@ -20,6 +22,12 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+
+// Serve frontend static files
+const frontendBuildPath = path.join(__dirname, '../../frontend/build');
+if (fs.existsSync(frontendBuildPath)) {
+  app.use(express.static(frontendBuildPath));
+}
 
 // Initialize background jobs
 console.log('Initializing background jobs...');
@@ -49,6 +57,16 @@ app.use('/api/auth', authRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/alerts', alertRoutes);
+
+// SPA fallback - serve index.html for all non-API routes
+app.get('*', (req, res) => {
+  const indexPath = path.join(frontendBuildPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).json({ error: 'Not found' });
+  }
+});
 
 // Error handler
 app.use((err, req, res, next) => {
