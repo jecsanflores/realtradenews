@@ -6,6 +6,7 @@ import NewsCard from '../components/NewsCard';
 import EconomicCalendar from '../components/EconomicCalendar';
 import PoliticalEvents from '../components/PoliticalEvents';
 import AlertsWidget from '../components/AlertsWidget';
+import StockIndices from '../components/StockIndices';
 import '../styles/dashboard.css';
 
 export default function Dashboard() {
@@ -98,6 +99,12 @@ export default function Dashboard() {
             >
               🎤 Discursos (Trump/Fed)
             </button>
+            <button
+              className={`nav-item ${activeTab === 'indices' ? 'active' : ''}`}
+              onClick={() => setActiveTab('indices')}
+            >
+              📊 Índices Bursátiles
+            </button>
           </nav>
         </aside>
 
@@ -133,6 +140,12 @@ export default function Dashboard() {
             <div className="tab-content">
               <h2>Discursos Políticos & Fed</h2>
               <PoliticalEvents events={politicalEvents} />
+            </div>
+          )}
+
+          {!loading && activeTab === 'indices' && (
+            <div className="tab-content">
+              <StockIndices />
             </div>
           )}
         </main>
