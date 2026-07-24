@@ -24,7 +24,8 @@
       "Bash(pkill -f \"node src/index.js\")",
       "Bash(PORT=8888 node /Users/rossanamartinez/Desktop/Jecsan/backend/src/index.js)",
       "Bash(curl -s http://localhost:8888/)",
-      "Bash(curl -s https://realtradenews-api.up.railway.app)"
+      "Bash(curl -s https://realtradenews-api.up.railway.app)",
+      "Bash(docker build *)"
     ]
   }
 }
